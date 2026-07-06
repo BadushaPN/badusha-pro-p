@@ -507,6 +507,7 @@ body.hovering .custom-cursor-follower {
         padding: 0 1.5rem;
         gap: 0;
         z-index: 5;
+        position: static; /* Let the absolute image wrapper stretch relative to hero-section */
     }
 
     .hero-text-container {
@@ -557,23 +558,12 @@ body.hovering .custom-cursor-follower {
     }
 
     .hero-image-border {
-        top: 15px;
-        left: 15px;
-        width: calc(100% - 30px);
-        height: calc(100% - 30px);
-        border: 1px solid rgba(var(--color-orange-rgb), 0.3);
-        box-shadow: inset 0 0 20px rgba(var(--color-orange-rgb), 0.15);
+        display: none; /* Hide border inset so the background image stretches completely borderless */
     }
 
     .hero-image-wrapper:hover .hero-img {
         transform: none;
         filter: grayscale(100%) contrast(110%);
-    }
-
-    .hero-image-wrapper:hover .hero-image-border {
-        top: 15px;
-        left: 15px;
-        border-color: rgba(var(--color-orange-rgb), 0.3);
     }
 
     .hero-title {
@@ -601,6 +591,67 @@ body.hovering .custom-cursor-follower {
     .scroll-down-indicator {
         bottom: 2.5rem;
         z-index: 10;
+    }
+
+    /* Hide original header CTA when scrolled on mobile */
+    .header.scrolled .nav-cta {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .header .nav-cta {
+        transition: opacity 0.3s ease;
+    }
+}
+
+/* Mobile Floating CTA (hidden by default on desktop) */
+.mobile-floating-cta {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-floating-cta {
+        display: block;
+        position: fixed;
+        bottom: 2.5rem;
+        left: 50%;
+        transform: translate(-50%, 100px);
+        z-index: 999;
+        width: calc(100% - 3rem);
+        max-width: 320px;
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    .mobile-floating-cta #btn-floating-cta {
+        width: 100%;
+        background-color: var(--color-orange);
+        color: var(--color-bg-deep);
+        border-color: var(--color-orange);
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(var(--color-orange-rgb), 0.4);
+        padding: 0.8rem 2rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-shadow: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-decoration: none;
+    }
+
+    .mobile-floating-cta #btn-floating-cta::before {
+        display: none;
+    }
+
+    /* Show floating CTA when header is scrolled */
+    .header.scrolled ~ .mobile-floating-cta {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        pointer-events: auto;
     }
 }
 

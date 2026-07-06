@@ -78,15 +78,30 @@ document.addEventListener("DOMContentLoaded", () => {
        HEADER SCROLL CLASS
        ========================================================================== */
     const header = document.querySelector(".header");
-    ScrollTrigger.create({
-        start: "top -50px",
-        onUpdate: (self) => {
-            if (self.direction === 1) {
-                header.classList.add("scrolled");
-            } else if (self.scroll() === 0) {
-                header.classList.remove("scrolled");
+    let mm = gsap.matchMedia();
+
+    // Desktop: scrolled class added after 50px of scroll
+    mm.add("(min-width: 769px)", () => {
+        ScrollTrigger.create({
+            start: "top -50px",
+            onUpdate: (self) => {
+                if (self.direction === 1) {
+                    header.classList.add("scrolled");
+                } else if (self.scroll() === 0) {
+                    header.classList.remove("scrolled");
+                }
             }
-        }
+        });
+    });
+
+    // Mobile: scrolled class added only after scrolling past the hero section
+    mm.add("(max-width: 768px)", () => {
+        ScrollTrigger.create({
+            trigger: "#hero",
+            start: "bottom 80px", // triggers when bottom of hero reaches 80px from top
+            onEnter: () => header.classList.add("scrolled"),
+            onLeaveBack: () => header.classList.remove("scrolled")
+        });
     });
 
     /* ==========================================================================
