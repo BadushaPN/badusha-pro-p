@@ -41,6 +41,7 @@ html {
     scroll-behavior: initial; /* Lenis handles smooth scrolling */
     scrollbar-width: thin;
     scrollbar-color: var(--color-orange) var(--color-bg-deep);
+    overflow-x: clip; /* clip doesn't create containing block, so fixed elements remain visible */
 }
 
 body {
@@ -49,7 +50,7 @@ body {
     font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: clip; /* clip prevents horizontal scroll without affecting fixed elements */
     -webkit-font-smoothing: antialiased;
 }
 
@@ -239,10 +240,11 @@ body.hovering .custom-cursor-follower {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw; /* Anchor to viewport width, not document width */
     z-index: 100;
     padding: 1.5rem 0;
     transition: var(--transition-smooth);
+    overflow: visible; /* Ensure nothing clips the header children */
 }
 
 .header.scrolled {
@@ -264,7 +266,10 @@ body.hovering .custom-cursor-follower {
 
 @media (max-width: 768px) {
     .header-container {
-        padding: 0 1.5rem;
+        width: 100vw; /* Force viewport-relative width to prevent document-width spillover */
+        max-width: 100vw;
+        padding: 0 1.25rem;
+        box-sizing: border-box;
     }
 }
 
@@ -275,6 +280,7 @@ body.hovering .custom-cursor-follower {
     color: var(--color-white);
     text-decoration: none;
     letter-spacing: -0.03em;
+    flex-shrink: 0;
 }
 
 .logo .dot {
@@ -288,8 +294,13 @@ body.hovering .custom-cursor-follower {
 
 @media (max-width: 768px) {
     .nav-menu {
-        display: none; /* simple burger menu can be added, or just keep header lightweight */
+        display: none; /* Keep header lightweight on mobile */
     }
+}
+
+/* Always show Hire Me button, even on mobile */
+.nav-cta {
+    flex-shrink: 0;
 }
 
 .nav-link {
@@ -601,9 +612,10 @@ body.hovering .custom-cursor-follower {
 
     /* Hire Me button — compact size on mobile, keeps existing outline style */
     .nav-cta .btn-outline {
-        font-size: 0.75rem;
-        padding: 0.5rem 1rem;
-        letter-spacing: 0.08em;
+        font-size: 0.7rem;
+        padding: 0.45rem 0.85rem;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
     }
 }
 
@@ -1068,9 +1080,42 @@ body.hovering .custom-cursor-follower {
     position: relative;
 }
 
+/* ── Mobile: projects layout adjustments while maintaining horizontal scroll ── */
 @media (max-width: 768px) {
+    .projects-pin-section {
+        overflow: hidden; /* Keep hidden to prevent document-width expansion */
+        padding: 0; /* Remove padding to allow full-height slides */
+    }
+
+    .horizontal-scroll-wrapper {
+        width: 500vw;
+        height: 100vh;
+    }
+
+    .projects-track {
+        height: 100%;
+    }
+
     .project-slide {
-        padding: 0 1.5rem;
+        width: 100vw;
+        height: 100vh;
+        padding: 0 1.25rem;
+    }
+
+    /* Show horizontal scroll indicator but style it appropriately */
+    .project-intro .horizontal-indicator {
+        display: flex;
+    }
+
+    /* Shrink the intro slide on mobile */
+    .project-intro .slide-title {
+        font-size: clamp(2rem, 8vw, 3.5rem);
+        margin-bottom: 1rem;
+    }
+
+    .project-intro .slide-desc {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
     }
 }
 
@@ -1135,6 +1180,13 @@ body.hovering .custom-cursor-follower {
         grid-template-columns: 1fr;
         gap: 2rem;
         padding: 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .project-card {
+        padding: 1.5rem;
+        gap: 1.25rem;
     }
 }
 

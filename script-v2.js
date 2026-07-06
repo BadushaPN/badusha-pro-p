@@ -274,13 +274,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (heroTitle) splitElementIntoWords(heroTitle);
     if (heroSubtitle) splitElementIntoChars(heroSubtitle);
 
-    gsap.from(".logo, .nav-link, .nav-cta .btn", {
-        y: -50,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.08,
-        ease: "power3.out"
-    });
+    gsap.fromTo(".logo, .nav-link, .nav-cta .btn", 
+        { y: -50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, stagger: 0.08, ease: "power3.out" }
+    );
 
     if (heroSubtitle) {
         gsap.from(".hero-subtitle .anim-char", {
@@ -517,12 +514,10 @@ document.addEventListener("DOMContentLoaded", () => {
        GSAP ANIMATIONS: PROJECTS HORIZONTAL SCROLL
        ========================================================================== */
     const projectsTrack = document.getElementById("projects-track");
+
     if (projectsTrack) {
         const slides = document.querySelectorAll(".project-slide");
         const totalSlides = slides.length;
-        
-        // Translate the container to the left by (totalSlides - 1) * 100vw
-        const translationAmount = -((totalSlides - 1) * 100) / totalSlides;
 
         const projectsTween = gsap.to(projectsTrack, {
             xPercent: -80, // 5 slides total. Moving left by 80% shows slides 1, 2, 3, 4 sequentially.
