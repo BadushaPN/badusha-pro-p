@@ -1715,6 +1715,11 @@ body.hovering .custom-cursor-follower {
     left: -1000px;
 }
 
+.project-hover-carousel.landscape {
+    width: 500px;
+    height: 280px;
+}
+
 .project-hover-carousel.show {
     opacity: 1;
     visibility: visible;
