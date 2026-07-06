@@ -332,13 +332,13 @@ body.hovering .custom-cursor-follower {
 }
 
 .particles-canvas {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
+    z-index: -1;
 }
 
 .hero-content {
@@ -855,7 +855,8 @@ body.hovering .custom-cursor-follower {
     position: relative;
     width: 100%;
     overflow: hidden;
-    background-color: #030303;
+    background-color: rgba(3, 3, 3, 0.7);
+    backdrop-filter: blur(10px);
 }
 
 .horizontal-scroll-wrapper {
@@ -895,7 +896,7 @@ body.hovering .custom-cursor-follower {
 }
 
 .project-intro {
-    background-color: var(--color-bg-deep);
+    background-color: transparent;
 }
 
 .project-intro .slide-title {
@@ -1013,11 +1014,12 @@ body.hovering .custom-cursor-follower {
 }
 
 /* ==========================================================================
-   SKILLS SECTION
+   SKILLS SECTION (FUTURISTIC SCIFI REDESIGN)
    ========================================================================== */
 .skills-section {
     padding: 12rem 0;
     border-bottom: 1px solid var(--color-border);
+    position: relative;
 }
 
 .skills-grid {
@@ -1034,53 +1036,147 @@ body.hovering .custom-cursor-follower {
 }
 
 .skill-category-card {
-    background-color: var(--color-bg-card);
-    border: 1px solid var(--color-border);
+    position: relative;
+    background: rgba(16, 16, 16, 0.35);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 102, 0, 0.12);
     padding: 3rem;
+    transition: var(--transition-smooth);
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+}
+
+.skill-category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    pointer-events: none;
+    transition: var(--transition-smooth);
+}
+
+.skill-category-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 20px;
+    width: 30px;
+    height: 3px;
+    background-color: var(--color-orange);
+    box-shadow: 0 0 10px var(--color-orange);
     transition: var(--transition-smooth);
 }
 
 .skill-category-card:hover {
-    border-color: var(--color-orange);
-    background-color: var(--color-bg-card-hover);
+    border-color: rgba(255, 102, 0, 0.5);
+    background-color: rgba(24, 24, 24, 0.55);
+    box-shadow: 0 0 40px rgba(255, 102, 0, 0.15), inset 0 0 15px rgba(255, 102, 0, 0.05);
     transform: translateY(-5px);
+}
+
+.skill-category-card:hover::after {
+    width: 60px;
+    background-color: var(--color-white);
+    box-shadow: 0 0 15px var(--color-white);
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.tech-id {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--color-orange);
+    letter-spacing: 0.1em;
+    opacity: 0.8;
 }
 
 .skill-category-card h3 {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 2rem;
     text-transform: uppercase;
-    border-left: 3px solid var(--color-orange);
-    padding-left: 1rem;
     line-height: 1.2;
+    margin: 0;
+    letter-spacing: 0.02em;
+    border-left: none;
+    padding-left: 0;
 }
 
+.status-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-orange);
+    box-shadow: 0 0 8px var(--color-orange);
+    position: relative;
+}
+
+.status-indicator.online {
+    background-color: #00ff66;
+    box-shadow: 0 0 8px #00ff66;
+    animation: pulse-online 2s infinite alternate;
+}
+
+@keyframes pulse-online {
+    0% { opacity: 0.4; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 12px #00ff66, 0 0 20px rgba(0,255,102,0.4); }
+}
+
+/* Skill List */
 .skill-list {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.8rem;
 }
 
 .skill-tag-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.6rem;
+}
+
+.skill-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .skill-tag {
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--color-white);
+    color: var(--color-gray-light);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
+.skill-percentage {
+    font-family: monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-orange);
+    letter-spacing: 0.05em;
+}
+
+/* Futuristic Segmented Progress Bar */
 .skill-progress {
     width: 100%;
-    height: 3px;
-    background-color: rgba(255, 255, 255, 0.05);
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .skill-progress-fill {
@@ -1088,10 +1184,33 @@ body.hovering .custom-cursor-follower {
     top: 0;
     left: 0;
     height: 100%;
-    background-color: var(--color-orange);
+    background: linear-gradient(90deg, var(--color-orange-dark), var(--color-orange));
+    box-shadow: 0 0 8px rgba(var(--color-orange-rgb), 0.4);
     transform: scaleX(0); /* animated via ScrollTrigger in JS */
     transform-origin: left;
     transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* Segmented block overlay pattern */
+    background-image: linear-gradient(
+        90deg,
+        rgba(5, 5, 5, 0.4) 2px,
+        transparent 2px
+    );
+    background-size: 6px 100%;
+}
+
+/* Futuristic Glowing Slider Tip */
+.skill-progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 14px;
+    background-color: var(--color-white);
+    box-shadow: 0 0 10px var(--color-orange), 0 0 20px var(--color-orange);
+    border-radius: 1px;
 }
 
 /* ==========================================================================
