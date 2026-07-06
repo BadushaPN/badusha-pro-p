@@ -518,17 +518,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (projectsTrack) {
         const slides = document.querySelectorAll(".project-slide");
         const totalSlides = slides.length;
+        const xMovement = -(100 * (totalSlides - 1) / totalSlides);
 
         const projectsTween = gsap.to(projectsTrack, {
-            xPercent: -80, // 5 slides total. Moving left by 80% shows slides 1, 2, 3, 4 sequentially.
+            xPercent: xMovement,
             ease: "none",
             scrollTrigger: {
                 trigger: ".projects-pin-section",
                 pin: true,
-                scrub: 1,
+                scrub: true,
                 start: "top top",
-                // Scroll length equal to 3.5 times the viewport height for comfortable horizontal scrolling speed
-                end: () => "+=" + (window.innerHeight * 3.5),
+                end: () => "+=" + (window.innerWidth * (totalSlides - 1)),
                 invalidateOnRefresh: true
             }
         });
