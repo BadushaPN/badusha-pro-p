@@ -769,4 +769,49 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    /* ==========================================================================
+       PROJECT HOVER CAROUSEL
+       ========================================================================== */
+    const projectCards = document.querySelectorAll(".project-card");
+    projectCards.forEach(card => {
+        const carousel = card.querySelector(".project-hover-carousel");
+        
+        if (carousel) {
+            // Move carousel to body to escape transform clipping
+            document.body.appendChild(carousel);
+            
+            const carouselImages = carousel.querySelectorAll(".carousel-img");
+            if (carouselImages.length > 0) {
+                let currentIndex = 0;
+                let intervalId = null;
+
+                card.addEventListener("mouseenter", () => {
+                    carousel.classList.add("show");
+                    intervalId = setInterval(() => {
+                        carouselImages[currentIndex].classList.remove("active");
+                        currentIndex = (currentIndex + 1) % carouselImages.length;
+                        carouselImages[currentIndex].classList.add("active");
+                    }, 600); // Swipe every 0.6s
+                });
+
+                card.addEventListener("mousemove", (e) => {
+                    // Slight offset so the cursor doesn't cover the popup
+                    const offsetX = 20;
+                    const offsetY = 20;
+                    
+                    carousel.style.left = `${e.clientX + offsetX}px`;
+                    carousel.style.top = `${e.clientY + offsetY}px`;
+                });
+
+                card.addEventListener("mouseleave", () => {
+                    carousel.classList.remove("show");
+                    clearInterval(intervalId);
+                    carouselImages[currentIndex].classList.remove("active");
+                    currentIndex = 0;
+                    carouselImages[currentIndex].classList.add("active");
+                });
+            }
+        }
+    });
+
 });
