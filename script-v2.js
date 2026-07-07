@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     animateFollower();
 
     // Hover states for cursor
-    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .strength-tag, .review-card");
+    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .strength-tag");
     interactiveElements.forEach((el) => {
         el.addEventListener("mouseenter", () => {
             document.body.classList.add("hovering");
@@ -644,150 +644,104 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Reviews 3D Carousel Auto-Looping & Interaction
-    const reviews = document.querySelectorAll(".review-card");
-    const bullets = document.querySelectorAll(".bullet");
-    if (reviews.length === 3) {
-        let currentCenterIndex = 1; // start with Praveen Muthai as center (middle)
-        let autoplayInterval;
+    // GSAP-powered Loop Reviews Carousel (No user interaction allowed)
+    const reviewsContainer = document.querySelector(".reviews-carousel-container");
 
-        function updateCarouselStates() {
-            reviews.forEach((card, index) => {
-                card.classList.remove("card-left", "card-center", "card-right");
-                let diff = index - currentCenterIndex;
+    if (reviewsContainer) {
+        const originalCards = Array.from(reviewsContainer.querySelectorAll(".review-card"));
+        const N = originalCards.length;
 
-                // Handle circular wrapping for exactly 3 items
-                if (diff === -2) diff = 1;
-                if (diff === 2) diff = -1;
+        if (N > 0) {
+            const track = document.createElement("div");
+            track.classList.add("reviews-track");
 
-                if (diff === -1) {
-                    card.classList.add("card-left");
-                } else if (diff === 0) {
-                    card.classList.add("card-center");
-                } else if (diff === 1) {
-                    card.classList.add("card-right");
-                }
+            // Clear container and append track
+            reviewsContainer.innerHTML = "";
+            reviewsContainer.appendChild(track);
+
+            // Build loop elements
+            // 1. Prepend clone of last item
+            const lastClone = originalCards[N - 1].cloneNode(true);
+            track.appendChild(lastClone);
+
+            // 2. Append original items
+            const cardsInTrack = [lastClone];
+            originalCards.forEach((card) => {
+                const newCard = card.cloneNode(true);
+                track.appendChild(newCard);
+                cardsInTrack.push(newCard);
             });
 
-            // Update Bullets
-            bullets.forEach((bullet, index) => {
-                if (index === currentCenterIndex) {
-                    bullet.classList.add("active");
-                } else {
-                    bullet.classList.remove("active");
-                }
-            });
-        }
-
-        function rotatePrev() {
-            currentCenterIndex = (currentCenterIndex - 1 + 3) % 3;
-            updateCarouselStates();
-        }
-
-        function rotateNext() {
-            currentCenterIndex = (currentCenterIndex + 1) % 3;
-            updateCarouselStates();
-        }
-
-        function startAutoplay() {
-            stopAutoplay();
-            autoplayInterval = setInterval(rotateNext, 4500); // rotates every 4.5s
-        }
-
-        function stopAutoplay() {
-            if (autoplayInterval) {
-                clearInterval(autoplayInterval);
+            // 3. Append clone of first 2 items (to ensure seamless wrapping)
+            const numClones = Math.min(2, N);
+            for (let i = 0; i < numClones; i++) {
+                const clone = originalCards[i].cloneNode(true);
+                track.appendChild(clone);
+                cardsInTrack.push(clone);
             }
-        }
 
-        // Click side cards to center them
-        reviews.forEach((card, index) => {
-            card.addEventListener("click", () => {
-                if (index !== currentCenterIndex) {
-                    currentCenterIndex = index;
-                    updateCarouselStates();
-                    startAutoplay(); // reset timer
+            const cards = cardsInTrack;
+            let currentIndex = 1; // start at the first original card
+            let autoplayInterval;
+
+            function centerCard(index, animate = true) {
+                const card = cards[index];
+                if (!card) return;
+
+                const containerWidth = reviewsContainer.offsetWidth;
+                const cardWidth = card.offsetWidth;
+                const cardOffsetLeft = card.offsetLeft;
+
+                // Calculate translation needed to center the card
+                const targetX = (containerWidth / 2) - (cardOffsetLeft + cardWidth / 2);
+
+                // Update active class
+                cards.forEach((c, idx) => {
+                    if (idx === index) {
+                        c.classList.add("active-card");
+                    } else {
+                        c.classList.remove("active-card");
+                    }
+                });
+
+                if (animate) {
+                    gsap.to(track, {
+                        x: targetX,
+                        duration: 0.64,
+                        ease: "power2.inOut",
+                        onComplete: () => {
+                            // Jump seamlessly from clone at index N+1 to original at index 1
+                            if (index === N + 1) {
+                                currentIndex = 1;
+                                centerCard(1, false);
+                            }
+                        }
+                    });
+                } else {
+                    gsap.set(track, { x: targetX });
                 }
-            });
-        });
+            }
 
-        // Click bullets to navigate
-        bullets.forEach((bullet) => {
-            bullet.addEventListener("click", () => {
-                const index = parseInt(bullet.getAttribute("data-index"));
-                if (index !== currentCenterIndex) {
-                    currentCenterIndex = index;
-                    updateCarouselStates();
-                    startAutoplay();
-                }
-            });
-        });
+            function playNext() {
+                currentIndex++;
+                centerCard(currentIndex, true);
+            }
 
-        // Swiping & dragging functionality for horizontal swipe
-        let dragStartX = 0;
-        let isDragging = false;
+            // Initial placement
+            setTimeout(() => {
+                centerCard(1, false);
+                // Start auto play
+                autoplayInterval = setInterval(playNext, 4000);
+            }, 100);
 
-        const carouselContainer = document.querySelector(".reviews-carousel-container");
-        if (carouselContainer) {
-            // Touch Swipe
-            carouselContainer.addEventListener("touchstart", (e) => {
-                dragStartX = e.touches[0].clientX;
-                isDragging = true;
-                stopAutoplay();
-            }, { passive: true });
-
-            carouselContainer.addEventListener("touchend", (e) => {
-                if (!isDragging) return;
-                isDragging = false;
-                const dragEndX = e.changedTouches[0].clientX;
-                const diffX = dragEndX - dragStartX;
-                const threshold = 50; // px threshold
-
-                if (diffX < -threshold) {
-                    rotateNext();
-                } else if (diffX > threshold) {
-                    rotatePrev();
-                }
-                startAutoplay();
-            });
-
-            // Mouse Drag
-            carouselContainer.addEventListener("mousedown", (e) => {
-                dragStartX = e.clientX;
-                isDragging = true;
-                stopAutoplay();
-            });
-
-            carouselContainer.addEventListener("mouseup", (e) => {
-                if (!isDragging) return;
-                isDragging = false;
-                const dragEndX = e.clientX;
-                const diffX = dragEndX - dragStartX;
-                const threshold = 50;
-
-                if (diffX < -threshold) {
-                    rotateNext();
-                } else if (diffX > threshold) {
-                    rotatePrev();
-                }
-                startAutoplay();
-            });
-
-            // Hover interactions & mouse leave safe state
-            carouselContainer.addEventListener("mouseenter", stopAutoplay);
-            carouselContainer.addEventListener("mouseleave", () => {
-                isDragging = false;
-                startAutoplay();
+            // Handle Resize
+            window.addEventListener("resize", () => {
+                centerCard(currentIndex, false);
             });
         }
-
-        // Initialize state
-        updateCarouselStates();
-        startAutoplay();
     }
 
     // Scroll reveal wrapper for the reviews section
-    const reviewsContainer = document.querySelector(".reviews-carousel-container");
     if (reviewsContainer) {
         gsap.from([reviewsContainer, ".reviews-bullets"], {
             opacity: 0,
@@ -830,7 +784,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const navLinks = document.querySelectorAll(".nav-link, .logo");
+    const navLinks = document.querySelectorAll(".nav-link, .logo, #btn-header-cta");
     navLinks.forEach((link) => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -1000,5 +954,199 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+
+    /* ==========================================================================
+       RESUME MODAL HANDLERS
+       ========================================================================== */
+    const resumeBtn = document.getElementById("btn-download-resume");
+    const resumeModal = document.getElementById("resume-modal");
+    const closeResumeBtn = document.getElementById("btn-close-resume");
+    const modalBackdrop = document.getElementById("resume-modal-backdrop");
+
+    if (resumeBtn && resumeModal) {
+        const modalContent = resumeModal.querySelector(".resume-modal-content");
+
+        const openResume = (e) => {
+            if (e) e.preventDefault();
+            resumeModal.classList.add("active");
+
+            // Pause page scrolling
+            if (typeof lenis !== "undefined" && lenis) {
+                lenis.stop();
+            }
+
+            // GSAP Entrance animation
+            if (modalContent) {
+                gsap.fromTo(modalContent,
+                    { scale: 0.9, opacity: 0 },
+                    { scale: 1, opacity: 1, duration: 0.45, ease: "power4.out", clearProps: "transform" }
+                );
+            }
+        };
+
+        const closeResume = () => {
+            // GSAP Exit animation
+            if (modalContent) {
+                gsap.to(modalContent, {
+                    scale: 0.9,
+                    opacity: 0,
+                    duration: 0.3,
+                    ease: "power3.in",
+                    onComplete: () => {
+                        resumeModal.classList.remove("active");
+                        // Return page scrolling
+                        if (typeof lenis !== "undefined" && lenis) {
+                            lenis.start();
+                        }
+                    }
+                });
+            } else {
+                resumeModal.classList.remove("active");
+                if (typeof lenis !== "undefined" && lenis) {
+                    lenis.start();
+                }
+            }
+        };
+
+        resumeBtn.addEventListener("click", openResume);
+        if (closeResumeBtn) closeResumeBtn.addEventListener("click", closeResume);
+        if (modalBackdrop) modalBackdrop.addEventListener("click", closeResume);
+
+        // Escape key to close modal
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && resumeModal.classList.contains("active")) {
+                closeResume();
+            }
+        });
+    }
+
+    /* ==========================================================================
+       TOAST NOTIFICATION SYSTEM
+       ========================================================================== */
+    function showNotification(title, message, type = "success") {
+        let container = document.getElementById("toast-container");
+        if (!container) {
+            container = document.createElement("div");
+            container.id = "toast-container";
+            container.className = "toast-container";
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement("div");
+        toast.className = `toast toast-${type}`;
+
+        let iconEmoji = "✓";
+        if (type === "error") {
+            iconEmoji = "✕";
+        }
+
+        toast.innerHTML = `
+            <div class="toast-indicator"></div>
+            <div class="toast-icon">${iconEmoji}</div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close">&times;</button>
+        `;
+
+        container.appendChild(toast);
+
+        // Force reflow
+        toast.offsetHeight;
+        toast.classList.add("show");
+
+        // Close button handler
+        const closeBtn = toast.querySelector(".toast-close");
+        const dismissToast = () => {
+            toast.classList.remove("show");
+            setTimeout(() => {
+                toast.remove();
+            }, 600);
+        };
+
+        if (closeBtn) {
+            closeBtn.addEventListener("click", dismissToast);
+        }
+
+        // Auto dismiss after 5 seconds
+        const autoDismissTimeout = setTimeout(dismissToast, 5000);
+
+        toast.addEventListener("mouseenter", () => clearTimeout(autoDismissTimeout));
+    }
+
+    /* ==========================================================================
+       FIREBASE FORM SUBMISSION
+       ========================================================================== */
+    const firebaseConfig = {
+        apiKey: "AIzaSyAIkkF0FGH3OuxqwYjl-o98EMwKz-T7EwI",
+        authDomain: "protfolio-83962.firebaseapp.com",
+        projectId: "protfolio-83962",
+        storageBucket: "protfolio-83962.firebasestorage.app",
+        messagingSenderId: "281358441641",
+        appId: "1:281358441641:web:18fb3351e67a02825b9db8",
+        measurementId: "G-NKWRP7PW2S"
+    };
+
+    if (typeof firebase !== 'undefined') {
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const contactForm = document.getElementById("contact-form");
+        if (contactForm) {
+            contactForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const nameInput = document.getElementById("form-name");
+                const emailInput = document.getElementById("form-email");
+                const messageInput = document.getElementById("form-message");
+                const submitBtn = document.getElementById("btn-submit-message");
+
+                if (!nameInput || !emailInput || !messageInput) return;
+
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
+                const message = messageInput.value.trim();
+
+                if (!name || !email || !message) {
+                    showNotification("Error", "Please fill in all required fields.", "error");
+                    return;
+                }
+
+                // Visual loading state
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.style.opacity = "0.7";
+                    const btnTextNode = submitBtn.childNodes[0];
+                    if (btnTextNode) btnTextNode.textContent = "Sending message... ";
+                }
+
+                db.collection("messages").add({
+                    name: name,
+                    email: email,
+                    message: message,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                    .then(() => {
+                        showNotification("Success", "Your message has been sent successfully!", "success");
+                        contactForm.reset();
+                    })
+                    .catch((error) => {
+                        console.error("Firestore submission error: ", error);
+                        showNotification("Failure", "Could not submit. Ensure Firestore database is created in Firebase Console.", "error");
+                    })
+                    .finally(() => {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.style.opacity = "";
+                            const btnTextNode = submitBtn.childNodes[0];
+                            if (btnTextNode) btnTextNode.textContent = "Send Message ";
+                        }
+                    });
+            });
+        }
+    } else {
+        console.warn("Firebase SDK is not loaded. Form will use default submission.");
+    }
 
 });

@@ -44,9 +44,8 @@
                 <a href="#contact" class="nav-link" id="link-contact">Contact</a>
             </nav>
             <div class="nav-cta">
-                <a href="#" class="btn btn-outline" id="btn-download-resume" download="Badusha_PN_Resume.pdf"
-                    style="margin-right: 10px;">Resume</a>
-                <a href="mailto:badushapn4@gmail.com" class="btn btn-outline" id="btn-header-cta">Hire Me</a>
+                <a href="#" class="btn btn-outline" id="btn-download-resume" style="margin-right: 10px;">Resume</a>
+                <a href="#contact" class="btn btn-outline" id="btn-header-cta">Hire Me</a>
             </div>
         </div>
     </header>
@@ -110,11 +109,6 @@
 
                         <div class="about-extra-info">
                             <div class="info-block">
-                                <h4>Education</h4>
-                                <p class="info-highlight">Flutter Development Bootcamp</p>
-                                <p class="info-sub">Brototype (July 2023 - Feb 2024)</p>
-                            </div>
-                            <div class="info-block">
                                 <h4>Certifications & More</h4>
                                 <ul class="info-list">
                                     <li>Data Structures & Algorithms (C++)</li>
@@ -140,10 +134,10 @@
                         <div class="career-objective-box">
                             <h4>Career Objective</h4>
                             <p id="about-objective">
-                                Aspiring Software Application Development Apprentice at Google. Driven by passion for
-                                new technologies, problem-solving, and learning new skills. Committed to applying
-                                knowledge in C++, Python, and practical software development on real-world projects
-                                while contributing to Google’s mission.
+                                Growth-oriented Mobile Product Engineer aspiring to drive impact at Google. Committed to
+                                leveraging 2.5+ years of Flutter expertise, advanced problem-solving in C++, and clean
+                                architecture pattern implementations to design world-class, high-performance
+                                applications contributing to Google's mission.
                             </p>
                         </div>
 
@@ -365,7 +359,7 @@
 
                 <div class="reviews-carousel-container">
                     <!-- Review 1 -->
-                    <div class="review-card">
+                    <div class="review-card layout-default">
                         <div class="review-quote-icon">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -392,34 +386,32 @@
                     </div>
 
                     <!-- Review 2 -->
-                    <div class="review-card">
-                        <div class="review-quote-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M9.5 8.5C8.11929 8.5 7 9.61929 7 11C7 12.3807 8.11929 13.5 9.5 13.5C9.78924 13.5 10.062 13.451 10.3152 13.3615C10.1558 14.7303 8.98667 15.75 7.5 15.75C7.08579 15.75 6.75 16.0858 6.75 16.5C6.75 16.9142 7.08579 17.25 7.5 17.25C9.70914 17.25 11.5 15.4591 11.5 13.25V10.5C11.5 9.39543 10.6046 8.5 9.5 8.5Z"
-                                    fill="var(--color-orange)" />
-                                <path
-                                    d="M16.5 8.5C15.1193 8.5 14 9.61929 14 11C14 12.3807 15.1193 13.5 16.5 13.5C16.7892 13.5 17.062 13.451 17.3152 13.3615C17.1558 14.7303 15.9867 15.75 14.5 15.75C14.0858 15.75 13.75 16.0858 13.75 16.5C13.75 16.9142 14.0858 17.25 14.5 17.25C16.7091 17.25 18.5 15.4591 18.5 13.25V10.5C18.5 9.39543 17.6046 8.5 16.5 8.5Z"
-                                    fill="var(--color-orange)" />
-                            </svg>
-                        </div>
-                        <p class="review-text">
-                            "Working with Badusha at Profluent Labs was an absolute pleasure. He demonstrated excellent
-                            ownership, consistently delivering outstanding results and keeping our mobile architecture
-                            clean and scalable. His technical agility and dedication were crucial to our success."
-                        </p>
-                        <div class="review-author">
+                    <div class="review-card layout-header-first" style="justify-content: flex-start;">
+                        <div class="review-author review-author-top"
+                            style="border-top: none; border-bottom: 1px solid var(--color-border); padding-top: 0; padding-bottom: 1.5rem; margin-bottom: 1.5rem; justify-content: flex-start;">
                             <div class="author-meta">
                                 <h4 class="author-name">Praveen Muthai</h4>
                                 <span class="author-role">Director, Profluent Labs</span>
                             </div>
+                            <div class="review-rating"
+                                style="margin-left: auto; color: var(--color-orange); font-size: 1.3rem; letter-spacing: 0.1em; opacity: 0.9;">
+                                ★★★★★
+                            </div>
                         </div>
+                        <h3
+                            style="font-family: var(--font-heading); font-size: 1.4rem; margin-bottom: 1.5rem; font-weight: 700;">
+                            "Excellent Ownership & Scalability"</h3>
+                        <p class="review-text" style="margin-bottom: 0; font-style: normal;">
+                            Working with Badusha at Profluent Labs was an absolute pleasure. He demonstrated excellent
+                            ownership, consistently delivering outstanding results and keeping our mobile architecture
+                            clean and scalable. His technical agility and dedication were crucial to our success.
+                        </p>
                     </div>
 
                     <!-- Review 3 -->
-                    <div class="review-card">
-                        <div class="review-quote-icon">
+                    <div class="review-card layout-highlight">
+                        <div class="review-quote-icon"
+                            style="opacity: 1; transform: scale(1.15); transform-origin: left top; margin-bottom: 1.5rem;">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -430,12 +422,15 @@
                                     fill="var(--color-orange)" />
                             </svg>
                         </div>
-                        <p class="review-text">
-                            "Badusha brought our mobile vision to life for Soulfulheaven with precision and creativity.
-                            His ability to build a seamless UI and integrate complex features turned our concepts into a
-                            beautiful user experience. He is a truly skilled developer."
+                        <p class="review-text"
+                            style="font-size: 1.25rem; font-weight: 600; color: var(--color-white); font-style: normal; margin-bottom: 1rem; line-height: 1.5;">
+                            "Badusha brought our mobile vision to life with precision and creativity."
                         </p>
-                        <div class="review-author">
+                        <p class="review-text" style="font-size: 0.95rem; margin-top: 0; flex-grow: 1;">
+                            His ability to build a seamless UI and integrate complex features turned our concepts into a
+                            beautiful user experience. He is a truly skilled developer who knows what he is doing.
+                        </p>
+                        <div class="review-author" style="margin-top: auto;">
                             <div class="author-meta">
                                 <h4 class="author-name">Fahiz A</h4>
                                 <span class="author-role">Founder, Soulfulheaven</span>
@@ -476,8 +471,7 @@
                     </div>
 
                     <div class="contact-right">
-                        <form class="contact-form" id="contact-form"
-                            onsubmit="event.preventDefault(); alert('Message sent!');">
+                        <form class="contact-form" id="contact-form">
                             <div class="form-group">
                                 <label for="form-name">Your Name</label>
                                 <input type="text" id="form-name" placeholder="John Doe" required>
@@ -534,12 +528,56 @@
 
     </main>
 
+    <!-- Resume Modal Overlay -->
+    <div class="resume-modal" id="resume-modal">
+        <div class="resume-modal-backdrop" id="resume-modal-backdrop"></div>
+        <div class="resume-modal-content">
+            <div class="resume-modal-header">
+                <div class="resume-modal-title-group">
+                    <span class="status-indicator-dot"></span>
+                    <span class="resume-modal-title">BADUSHA_PN_RESUME.pdf</span>
+                </div>
+                <div class="resume-modal-actions">
+                    <a href="assets/Badusha_PN_Resume.pdf" download="Badusha_PN_Resume.pdf"
+                        class="btn btn-outline btn-download-pdf">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download
+                    </a>
+                    <button class="btn btn-close-modal" id="btn-close-resume" aria-label="Close modal">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="resume-modal-body">
+                <div class="resume-mobile-fallback">
+                    <p>For the best experience on mobile devices, please download the resume directly.</p>
+                    <a href="assets/Badusha_PN_Resume.pdf" download="Badusha_PN_Resume.pdf"
+                        class="btn btn-filled">Download Resume</a>
+                </div>
+                <iframe src="assets/Badusha_PN_Resume.pdf" class="resume-iframe" id="resume-iframe"></iframe>
+            </div>
+        </div>
+    </div>
+
     <!-- Lenis for Smooth Scroll -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
 
     <!-- GSAP Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <!-- Custom Logic -->
     <script src="script-v2.js"></script>
 </body>
