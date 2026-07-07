@@ -63,8 +63,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     animateFollower();
 
+    // Detect keyboard navigation (Tab key usage)
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+            document.body.classList.add("keyboard-navigation");
+        }
+    });
+
+    window.addEventListener("mousedown", () => {
+        document.body.classList.remove("keyboard-navigation");
+    });
+
     // Hover states for cursor
-    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .strength-tag");
+    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .strength-tag, .bullet");
     interactiveElements.forEach((el) => {
         el.addEventListener("mouseenter", () => {
             document.body.classList.add("hovering");
@@ -644,7 +655,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // GSAP-powered Loop Reviews Carousel (No user interaction allowed)
+    // GSAP-powered Dynamic Infinite Reviews Carousel (With user swipe and bullet navigation)
     const reviewsContainer = document.querySelector(".reviews-carousel-container");
 
     if (reviewsContainer) {
@@ -659,7 +670,7 @@ document.addEventListener("DOMContentLoaded", () => {
             reviewsContainer.innerHTML = "";
             reviewsContainer.appendChild(track);
 
-            // Build loop elements
+            // Build loop elements to support infinite bidirectional wrapping
             // 1. Prepend clone of last item
             const lastClone = originalCards[N - 1].cloneNode(true);
             track.appendChild(lastClone);
@@ -681,21 +692,42 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const cards = cardsInTrack;
+            const bullets = document.querySelectorAll(".reviews-bullets .bullet");
             let currentIndex = 1; // start at the first original card
-            let autoplayInterval;
+            let autoplayInterval = null;
+            let startX = 0;
+            let isDragging = false;
+            let dragDiff = 0;
+
+            function getTargetX(index) {
+                const card = cards[index];
+                if (!card) return 0;
+                const containerWidth = reviewsContainer.offsetWidth;
+                const cardWidth = card.offsetWidth;
+                const cardOffsetLeft = card.offsetLeft;
+                return (containerWidth / 2) - (cardOffsetLeft + cardWidth / 2);
+            }
+
+            function updateBullets(index) {
+                if (!bullets.length) return;
+                // Solve the active index mapping back to original cards
+                const bulletIdx = (index - 1 + N) % N;
+                bullets.forEach((bullet, bIdx) => {
+                    if (bIdx === bulletIdx) {
+                        bullet.classList.add("active");
+                    } else {
+                        bullet.classList.remove("active");
+                    }
+                });
+            }
 
             function centerCard(index, animate = true) {
                 const card = cards[index];
                 if (!card) return;
 
-                const containerWidth = reviewsContainer.offsetWidth;
-                const cardWidth = card.offsetWidth;
-                const cardOffsetLeft = card.offsetLeft;
+                const targetX = getTargetX(index);
 
-                // Calculate translation needed to center the card
-                const targetX = (containerWidth / 2) - (cardOffsetLeft + cardWidth / 2);
-
-                // Update active class
+                // Update active class styles
                 cards.forEach((c, idx) => {
                     if (idx === index) {
                         c.classList.add("active-card");
@@ -704,16 +736,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
+                updateBullets(index);
+
                 if (animate) {
                     gsap.to(track, {
                         x: targetX,
                         duration: 0.64,
                         ease: "power2.inOut",
                         onComplete: () => {
-                            // Jump seamlessly from clone at index N+1 to original at index 1
+                            // Seamless wrap boundaries
                             if (index === N + 1) {
                                 currentIndex = 1;
                                 centerCard(1, false);
+                            } else if (index === 0) {
+                                currentIndex = N;
+                                centerCard(N, false);
                             }
                         }
                     });
@@ -727,11 +764,103 @@ document.addEventListener("DOMContentLoaded", () => {
                 centerCard(currentIndex, true);
             }
 
+            function startAutoplay() {
+                stopAutoplay();
+                autoplayInterval = setInterval(playNext, 4000);
+            }
+
+            function stopAutoplay() {
+                if (autoplayInterval) {
+                    clearInterval(autoplayInterval);
+                    autoplayInterval = null;
+                }
+            }
+
+            // Bullet elements navigation clicks
+            if (bullets.length > 0) {
+                bullets.forEach((bullet) => {
+                    bullet.addEventListener("click", () => {
+                        const targetBulletIndex = parseInt(bullet.getAttribute("data-index"));
+                        const targetTrackIndex = targetBulletIndex + 1;
+                        currentIndex = targetTrackIndex;
+                        centerCard(currentIndex, true);
+                        startAutoplay();
+                    });
+                });
+            }
+
+            // Touch & Mouse Drag handlers for swipe action
+            function dragStart(e) {
+                if (e.type === 'mousedown' && e.button !== 0) return; // ignore right clicks
+                if (e.target.closest("a, button")) return; // ignore on interactive nodes
+
+                isDragging = true;
+                startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                dragDiff = 0;
+                stopAutoplay();
+
+                gsap.killTweensOf(track);
+                reviewsContainer.style.cursor = 'grabbing';
+            }
+
+            function dragMove(e) {
+                if (!isDragging) return;
+                const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                dragDiff = currentX - startX;
+
+                const baseTargetX = getTargetX(currentIndex);
+                let currentPosition = baseTargetX + dragDiff;
+
+                // Edge resistance bounds
+                if (currentIndex === 0 && dragDiff > 0) {
+                    currentPosition = baseTargetX + dragDiff * 0.35;
+                } else if (currentIndex === N + 1 && dragDiff < 0) {
+                    currentPosition = baseTargetX + dragDiff * 0.35;
+                }
+
+                gsap.set(track, { x: currentPosition });
+            }
+
+            function dragEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+                reviewsContainer.style.cursor = 'grab';
+
+                const threshold = 60; // minimum drag distance override
+
+                if (dragDiff < -threshold) {
+                    currentIndex++;
+                } else if (dragDiff > threshold) {
+                    currentIndex--;
+                }
+
+                if (currentIndex < 0) {
+                    currentIndex = 0;
+                } else if (currentIndex > N + 1) {
+                    currentIndex = N + 1;
+                }
+
+                centerCard(currentIndex, true);
+                startAutoplay();
+            }
+
+            // Bind drag events
+            reviewsContainer.addEventListener("mousedown", dragStart);
+            window.addEventListener("mousemove", dragMove);
+            window.addEventListener("mouseup", dragEnd);
+
+            reviewsContainer.addEventListener("touchstart", dragStart, { passive: true });
+            reviewsContainer.addEventListener("touchmove", dragMove, { passive: true });
+            reviewsContainer.addEventListener("touchend", dragEnd);
+
+            // Pause autoplay when hovering or interacting
+            reviewsContainer.addEventListener("mouseenter", stopAutoplay);
+            reviewsContainer.addEventListener("mouseleave", startAutoplay);
+
             // Initial placement
             setTimeout(() => {
                 centerCard(1, false);
-                // Start auto play
-                autoplayInterval = setInterval(playNext, 4000);
+                startAutoplay();
             }, 100);
 
             // Handle Resize
