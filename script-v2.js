@@ -310,6 +310,14 @@ document.addEventListener("DOMContentLoaded", () => {
         delay: 0.6
     });
 
+    gsap.from("#hero-current-work", {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        ease: "power3.out",
+        delay: 0.75
+    });
+
     gsap.from(".hero-image-wrapper", {
         opacity: 0,
         scale: 0.95,
