@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     animateFollower();
 
     // Hover states for cursor
-    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .strength-tag");
+    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .strength-tag, .review-card");
     interactiveElements.forEach((el) => {
         el.addEventListener("mouseenter", () => {
             document.body.classList.add("hovering");
@@ -631,6 +631,23 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: {
                 trigger: footerBottom,
                 start: "top 95%",
+                toggleActions: "play none none reverse"
+            }
+        });
+    }
+
+    // Reviews Card Reveal
+    const reviewCards = document.querySelectorAll(".review-card");
+    if (reviewCards.length > 0) {
+        gsap.from(reviewCards, {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".reviews-grid",
+                start: "top 85%",
                 toggleActions: "play none none reverse"
             }
         });
