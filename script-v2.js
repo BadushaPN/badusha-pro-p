@@ -1,6 +1,6 @@
 // Wait for DOM to load
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     // Register GSAP ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("mousemove", (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        
+
         // Instant cursor position
         cursor.style.left = `${mouseX}px`;
         cursor.style.top = `${mouseY}px`;
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.size = Math.random() * 2 + 1;
                 this.baseX = this.x;
                 this.baseY = this.y;
-                
+
                 // Color configuration: Orange, Gray, White
                 const randColor = Math.random();
                 if (randColor < 0.4) {
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     let distance = Math.sqrt(dx * dx + dy * dy);
                     let forceDirectionX = dx / distance;
                     let forceDirectionY = dy / distance;
-                    
+
                     if (distance < mouse.radius) {
                         let force = (mouse.radius - distance) / mouse.radius;
                         let directionX = forceDirectionX * force * this.density * 0.6;
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!element) return;
         const nodes = Array.from(element.childNodes);
         element.innerHTML = "";
-        
+
         nodes.forEach(node => {
             if (node.nodeType === Node.TEXT_NODE) {
                 const text = node.textContent;
@@ -215,11 +215,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
                         const spanWrapper = document.createElement("span");
                         spanWrapper.className = "word-wrapper";
-                        
+
                         const spanAnim = document.createElement("span");
                         spanAnim.className = "anim-word";
                         spanAnim.textContent = word;
-                        
+
                         spanWrapper.appendChild(spanAnim);
                         element.appendChild(spanWrapper);
                     }
@@ -231,11 +231,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     const highlightText = node.textContent;
                     const spanHighlight = document.createElement("span");
                     spanHighlight.className = "highlight word-wrapper";
-                    
+
                     const spanAnim = document.createElement("span");
                     spanAnim.className = "anim-word";
                     spanAnim.textContent = highlightText;
-                    
+
                     spanHighlight.appendChild(spanAnim);
                     element.appendChild(spanHighlight);
                 } else {
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!element) return;
         const text = element.textContent.trim();
         element.innerHTML = "";
-        
+
         [...text].forEach(char => {
             const charSpan = document.createElement("span");
             if (char === " ") {
@@ -266,15 +266,15 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ==========================================================================
        GSAP ANIMATIONS: TEXT & SECTION REVEALS
        ========================================================================== */
-    
+
     // Page load transition
     const heroTitle = document.querySelector(".hero-title");
     const heroSubtitle = document.querySelector(".hero-subtitle");
-    
+
     if (heroTitle) splitElementIntoWords(heroTitle);
     if (heroSubtitle) splitElementIntoChars(heroSubtitle);
 
-    gsap.fromTo(".logo, .nav-link, .nav-cta .btn", 
+    gsap.fromTo(".logo, .nav-link, .nav-cta .btn",
         { y: -50, opacity: 0 },
         { y: 0, opacity: 1, duration: 1, stagger: 0.08, ease: "power3.out" }
     );
@@ -332,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const words = text.split(" ");
         pitch.innerHTML = words.map(word => `<span class="reveal-word">${word}</span>`).join(" ");
 
-        gsap.fromTo(".reveal-word", 
+        gsap.fromTo(".reveal-word",
             { opacity: 0.2 },
             {
                 opacity: 1,
@@ -440,11 +440,11 @@ document.addEventListener("DOMContentLoaded", () => {
        ========================================================================== */
     const timelineItems = document.querySelectorAll(".timeline-item");
     if (timelineItems.length > 0) {
-        
+
         // Progress bar line animation
-        gsap.fromTo(".timeline-progress", 
+        gsap.fromTo(".timeline-progress",
             { height: "0%" },
-            { 
+            {
                 height: "100%",
                 ease: "none",
                 scrollTrigger: {
@@ -462,10 +462,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const role = item.querySelector(".timeline-role");
             const company = item.querySelector(".timeline-company");
             const details = contentBox.querySelectorAll("h5, li");
-            
+
             if (role) splitElementIntoWords(role);
             if (company) splitElementIntoWords(company);
-            
+
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: item,
@@ -475,13 +475,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     onLeaveBack: () => item.classList.remove("active")
                 }
             });
-            
+
             tl.from(contentBox, {
                 opacity: 0.3,
                 y: 30,
                 duration: 0.8
             });
-            
+
             if (role) {
                 tl.from(role.querySelectorAll(".anim-word"), {
                     yPercent: 100,
@@ -489,7 +489,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     stagger: 0.05
                 }, 0.2);
             }
-            
+
             if (company) {
                 tl.from(company.querySelectorAll(".anim-word"), {
                     yPercent: 100,
@@ -497,7 +497,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     stagger: 0.05
                 }, 0.3);
             }
-            
+
             if (details.length > 0) {
                 tl.from(details, {
                     opacity: 0,
@@ -521,14 +521,14 @@ document.addEventListener("DOMContentLoaded", () => {
         slides.forEach((slide, i) => {
             const card = slide.querySelector(".project-card");
             if (!card) return;
-            
+
             const num = card.querySelector(".project-num");
             const name = card.querySelector(".project-name");
             const tags = card.querySelector(".project-tags");
             const features = card.querySelectorAll(".project-features li");
-            
+
             if (name) splitElementIntoWords(name);
-            
+
             gsap.from(card, {
                 opacity: 0.2,
                 y: 150,
@@ -550,7 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     toggleActions: "play none none reverse"
                 }
             });
-            
+
             if (num) {
                 tl.from(num, {
                     opacity: 0,
@@ -558,7 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     duration: 0.6
                 }, 0.1);
             }
-            
+
             if (name) {
                 tl.from(name.querySelectorAll(".anim-word"), {
                     yPercent: 100,
@@ -566,7 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     stagger: 0.05
                 }, 0.2);
             }
-            
+
             if (tags) {
                 tl.from(tags, {
                     opacity: 0,
@@ -574,7 +574,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     duration: 0.6
                 }, 0.3);
             }
-            
+
             if (features.length > 0) {
                 tl.from(features, {
                     opacity: 0,
@@ -598,10 +598,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const tags = card.querySelectorAll(".skill-tag");
             const percents = card.querySelectorAll(".skill-percentage");
             const fills = card.querySelectorAll(".skill-progress-fill");
-            
+
             if (techId) splitElementIntoChars(techId);
             if (h3) splitElementIntoWords(h3);
-            
+
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: card,
@@ -609,7 +609,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     toggleActions: "play none none reverse"
                 }
             });
-            
+
             if (techId) {
                 tl.from(techId.querySelectorAll(".anim-char"), {
                     opacity: 0,
@@ -619,7 +619,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     stagger: 0.02
                 }, 0);
             }
-            
+
             if (h3) {
                 tl.from(h3.querySelectorAll(".anim-word"), {
                     yPercent: 100,
@@ -627,7 +627,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     stagger: 0.05
                 }, 0.1);
             }
-            
+
             tl.from([tags, percents], {
                 opacity: 0,
                 y: 15,
@@ -636,7 +636,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ease: "power2.out"
             }, 0.2);
 
-            tl.fromTo(fills, 
+            tl.fromTo(fills,
                 { scaleX: 0 },
                 {
                     scaleX: 1,
@@ -721,7 +721,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sections.forEach((section) => {
         const id = section.getAttribute("id");
         const navAnchor = document.querySelector(`.nav-menu a[href="#${id}"]`);
-        
+
         if (navAnchor) {
             ScrollTrigger.create({
                 trigger: section,
@@ -752,47 +752,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+
     /* ==========================================================================
-       PROJECT HOVER CAROUSEL
+       PROJECT EMBEDDED CAROUSEL
        ========================================================================== */
     const projectCards = document.querySelectorAll(".project-card");
     projectCards.forEach(card => {
-        const carousel = card.querySelector(".project-hover-carousel");
-        
-        if (carousel) {
-            // Move carousel to body to escape transform clipping
-            document.body.appendChild(carousel);
-            
-            const carouselImages = carousel.querySelectorAll(".carousel-img");
-            if (carouselImages.length > 0) {
+        const track = card.querySelector(".carousel-track");
+
+        if (track) {
+            const carouselImages = track.querySelectorAll(".carousel-img");
+            if (carouselImages.length > 1) {
                 let currentIndex = 0;
-                let intervalId = null;
 
-                card.addEventListener("mouseenter", () => {
-                    carousel.classList.add("show");
-                    intervalId = setInterval(() => {
-                        carouselImages[currentIndex].classList.remove("active");
-                        currentIndex = (currentIndex + 1) % carouselImages.length;
-                        carouselImages[currentIndex].classList.add("active");
-                    }, 600); // Swipe every 0.6s
-                });
-
-                card.addEventListener("mousemove", (e) => {
-                    // Slight offset so the cursor doesn't cover the popup
-                    const offsetX = 20;
-                    const offsetY = 20;
-                    
-                    carousel.style.left = `${e.clientX + offsetX}px`;
-                    carousel.style.top = `${e.clientY + offsetY}px`;
-                });
-
-                card.addEventListener("mouseleave", () => {
-                    carousel.classList.remove("show");
-                    clearInterval(intervalId);
-                    carouselImages[currentIndex].classList.remove("active");
-                    currentIndex = 0;
-                    carouselImages[currentIndex].classList.add("active");
-                });
+                setInterval(() => {
+                    currentIndex = (currentIndex + 1) % carouselImages.length;
+                    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }, 2500); // Switch image every 2.5s for a smoother swipe animation
             }
         }
     });

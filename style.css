@@ -1679,48 +1679,81 @@ body.hovering .custom-cursor-follower {
 }
 
 /* ==========================================================================
-   PROJECT HOVER CAROUSEL (FLOATING)
+   PROJECT EMBEDDED CAROUSEL
    ========================================================================== */
-.project-hover-carousel {
-    position: fixed;
-    width: 280px;
-    height: 500px;
-    z-index: 10000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    pointer-events: none;
+.project-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.project-carousel {
+    position: relative;
+    width: 100%;
+    height: 450px;
     border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(255, 102, 0, 0.25);
-    background-color: var(--color-bg-card);
-    border: 1px solid rgba(255, 102, 0, 0.2);
     overflow: hidden;
-    top: -1000px;
-    left: -1000px;
+    box-shadow: 0 15px 40px rgba(255, 102, 0, 0.15);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    background-color: var(--color-bg-deep);
 }
 
-.project-hover-carousel.landscape {
-    width: 500px;
-    height: 280px;
+/* Base track design for sliding swipe animation */
+.carousel-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* ultra smooth swipe animation */
 }
 
-.project-hover-carousel.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.project-hover-carousel .carousel-img {
-    position: absolute;
-    top: 0;
-    left: 0;
+/* Image behavior in track */
+.project-carousel .carousel-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+    flex-shrink: 0;
 }
 
-.project-hover-carousel .carousel-img.active {
-    opacity: 1;
+/* Mobile projects (vertical pose) styling */
+.project-carousel.mobile-pose {
+    aspect-ratio: 9 / 18.5;
+    height: 520px;
+    width: auto;
+    margin: 0 auto;
+    border-radius: 36px;
+    border: 8px solid #1c1c1e; /* device mockup border */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 102, 0, 0.08);
+}
+
+/* Second project Web (landscape pose) styling */
+.project-carousel.landscape {
+    aspect-ratio: 16 / 10;
+    height: auto;
+    max-height: 400px;
+    width: 100%;
+    border-radius: 12px;
+    border: 6px solid #1c1c1e; /* device mockup border */
+}
+
+/* Responsive carousel layouts */
+@media (max-width: 1024px) {
+    .project-carousel.mobile-pose {
+        height: 440px;
+        width: auto;
+        margin: 0 auto;
+        order: -1; /* Move image above text on mobile */
+    }
+    
+    .project-carousel.landscape {
+        width: 100%;
+        max-height: 300px;
+        order: -1;
+    }
+}
+
+@media (max-width: 480px) {
+    .project-carousel.mobile-pose {
+        height: 360px;
+    }
 }
 
