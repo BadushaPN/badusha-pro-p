@@ -85,7 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         el.addEventListener("click", () => {
             document.body.classList.remove("hovering");
-            el.blur();
+            if (el.tagName !== "INPUT" && el.tagName !== "TEXTAREA") {
+                el.blur();
+            }
         });
     });
 
@@ -653,7 +655,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ease: "power2.out",
             scrollTrigger: {
                 trigger: footerBottom,
-                start: "top 95%",
+                start: "top bottom",
                 toggleActions: "play none none reverse"
             }
         });
@@ -1287,12 +1289,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
+            // Check if visitor is returning by inspecting localStorage BEFORE generating new ID
+            const isNewVisitor = !localStorage.getItem("visitor_browser_id");
             const browserId = getOrCreateBrowserId();
             const localVisitCount = getAndIncrementVisitCount();
             const details = getBrowserDetails();
 
-            // Log visit details in 'visits' collection
-            db.collection("visits").add({
+            // Log/Update unique visit details in 'visits' collection using browserId as the document ID
+            db.collection("visits").doc(browserId).set({
                 browserId: browserId,
                 browserName: details.browser,
                 os: details.os,
@@ -1300,26 +1304,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 language: details.language,
                 screenResolution: details.screenResolution,
                 referrer: details.referrer,
-                localVisitCount: localVisitCount,
+                localVisitCount: firebase.firestore.FieldValue.increment(1),
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-                .then((docRef) => {
-                    console.log(`[Analytics] Visit logged successfully (Doc ID: ${docRef.id})`);
+            }, { merge: true })
+                .then(() => {
+                    console.log(`[Analytics] Visit logged/updated successfully for browser ID: ${browserId}`);
                 })
                 .catch((err) => {
                     console.error("[Analytics] Error logging detailed visit: ", err);
                 });
 
-            // Increment separate global stats count (if permitted by rules)
-            db.collection("stats").doc("global").set({
-                totalVisits: firebase.firestore.FieldValue.increment(1)
-            }, { merge: true })
-                .then(() => {
-                    console.log("[Analytics] Global count incremented successfully");
-                })
-                .catch((err) => {
-                    console.warn("[Analytics] Global count increment bypassed/denied: ", err);
-                });
+            // Increment separate global stats count ONLY for brand new devices
+            if (isNewVisitor) {
+                db.collection("stats").doc("global").set({
+                    totalVisits: firebase.firestore.FieldValue.increment(1)
+                }, { merge: true })
+                    .then(() => {
+                        console.log("[Analytics] Global count incremented successfully (New visitor)");
+                    })
+                    .catch((err) => {
+                        console.warn("[Analytics] Global count increment bypassed/denied: ", err);
+                    });
+            } else {
+                console.log("[Analytics] Returning visitor detected. Global count not incremented.");
+            }
 
         } catch (analyticsError) {
             console.error("[Analytics] Tracking system failed to run: ", analyticsError);
@@ -1364,7 +1372,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     .then(() => {
                         showNotification("Success", "Your message has been sent successfully!", "success");
 
-                        // Send Auto-Response email via EmailJS (if configured)
+                        // Disable client-side EmailJS to prevent duplicate emails when backend Firestore Trigger/Extension is active
+                        /*
                         if (typeof emailjs !== 'undefined') {
                             const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
                             const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
@@ -1381,6 +1390,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 });
                             }
                         }
+                        */
 
                         contactForm.reset();
                     })

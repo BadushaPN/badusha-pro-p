@@ -680,7 +680,7 @@ textarea:focus-visible,
         display: none;
     }
 
-    .scroll-down-indicator {
+    .hero-scroll-container {
         bottom: 2.5rem;
         z-index: 10;
     }
@@ -699,26 +699,55 @@ textarea:focus-visible,
     display: none;
 }
 
-/* Scroll indicator */
-.scroll-down-indicator {
+/* Scroll indicator container */
+.hero-scroll-container {
     position: absolute;
     bottom: 2rem;
     left: 4rem;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 1.5rem;
     z-index: 10;
+}
+
+.scroll-down-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
     font-size: 0.75rem;
     letter-spacing: 0.2em;
     color: var(--color-gray);
     cursor: pointer;
 }
 
+.hero-social-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.hero-social-link {
+    color: var(--color-gray);
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-social-link:hover {
+    color: var(--color-orange);
+    transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
-    .scroll-down-indicator {
+    .hero-scroll-container {
         left: 50%;
         transform: translateX(-50%);
+        align-items: center;
+    }
+
+    .scroll-down-indicator {
         align-items: center;
     }
 }
