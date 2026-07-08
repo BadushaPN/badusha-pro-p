@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Hover states for cursor
-    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .strength-tag, .bullet");
+    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .bullet");
     interactiveElements.forEach((el) => {
         el.addEventListener("mouseenter", () => {
             document.body.classList.add("hovering");
@@ -83,7 +83,20 @@ document.addEventListener("DOMContentLoaded", () => {
         el.addEventListener("mouseleave", () => {
             document.body.classList.remove("hovering");
         });
+        el.addEventListener("click", () => {
+            document.body.classList.remove("hovering");
+            el.blur();
+        });
     });
+
+    // Reset cursor hovering state if the tab/window loses focus or gains it
+    window.addEventListener("blur", () => {
+        document.body.classList.remove("hovering");
+    });
+    window.addEventListener("focus", () => {
+        document.body.classList.remove("hovering");
+    });
+
 
     /* ==========================================================================
        HEADER SCROLL CLASS
@@ -321,6 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
         delay: 0.6
     });
 
+    /*
     gsap.from("#hero-current-work", {
         opacity: 0,
         y: 20,
@@ -328,6 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ease: "power3.out",
         delay: 0.75
     });
+    */
 
     gsap.from(".hero-image-wrapper", {
         opacity: 0,
@@ -441,18 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    gsap.from(".strengths-box h4, .strength-tag", {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        stagger: 0.05,
-        ease: "power2.out",
-        scrollTrigger: {
-            trigger: ".strengths-box",
-            start: "top 85%",
-            toggleActions: "play none none reverse"
-        }
-    });
+
 
     /* ==========================================================================
        GSAP ANIMATIONS: COMPACT EXPERIENCE LIST
